@@ -1,0 +1,36 @@
+{
+  "name": "nitric-sdk-snippets",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "Apache-2.0",
+  "scripts": {
+    "test": "jest",
+    "format:check": "prettier --check snippets",
+    "format:fix": "prettier --write snippets",
+    "lint": "eslint \"snippets/**/*.ts\"",
+    "lint:fix": "yarn lint --fix"
+  },
+  "dependencies": {
+    "@nitric/sdk": "^0.1.17"
+  },
+  "lint-staged": {
+    "**/*.{ts}": "yarn lint:fix && yarn format:fix"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.24",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "eslint": "^7.24.0",
+    "husky": "^6.0.0",
+    "jest": "^26.6.1",
+    "lint-staged": "^10.5.4",
+    "prettier": "^2.2.1",
+    "ts-jest": "^26.4.3",
+    "typescript": "^3.3"
+  }
+}

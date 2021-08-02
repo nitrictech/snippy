@@ -96,8 +96,6 @@ const processSnippet = async (filePath: string) => {
   MANIFEST[name + ext] = snippet;
 };
 
-console.log(`**/snippets/**/*.*(${Object.keys(MD_LANG_MAP).join("|")})`);
-
 glob(
   `**/snippets/**/*.*(${Object.keys(MD_LANG_MAP)
     .map((l) => l.substring(1))

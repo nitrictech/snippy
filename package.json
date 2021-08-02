@@ -1,0 +1,20 @@
+{
+  "name": "nitric-snippets",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:nitrictech/snippets.git",
+  "author": "Nitric <nitric.io>",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "ts-node ./scripts/build-manifest.ts"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.4",
+    "@types/min-indent": "^1.0.0",
+    "@types/node": "^16.4.10",
+    "glob": "^7.1.7",
+    "min-indent": "^1.0.1",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "name": "@nitric/snippy",
+  "description": "Nitric code snippet parser client",
+  "version": "0.0.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "repository": "git@github.com:nitrictech/snippets.git",
+  "author": "Nitric <https://github.com/nitrictech>",
+  "license": "Apache-2.0",
+  "scripts": {
+    "bump": "standard-version",
+    "build": "tsc",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "prettier:check": "prettier --check src",
+    "prettier:fix": "prettier --write src",
+    "lint": "eslint \"src/**/*.ts\"",
+    "lint:fix": "yarn lint --fix",
+    "license:header:remove": "license-check-and-add remove -f ./licenseconfig.json",
+    "license:header:add": "license-check-and-add add -f ./licenseconfig.json",
+    "license:header:check": "license-check-and-add check -f ./licenseconfig.json",
+    "license:check": "licensee --production"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.4",
+    "@types/jest": "^26.0.24",
+    "@types/min-indent": "^1.0.0",
+    "@types/node": "^16.4.10",
+    "@typescript-eslint/eslint-plugin": "^4.29.0",
+    "@typescript-eslint/parser": "^4.29.0",
+    "codecov": "^3.8.3",
+    "eslint": "^7.32.0",
+    "glob": "^7.1.7",
+    "husky": "^7.0.1",
+    "jest": "^27.0.6",
+    "license-check-and-add": "^4.0.2",
+    "licensee": "^8.2.0",
+    "lint-staged": "^11.1.1",
+    "prettier": "^2.3.2",
+    "standard-version": "^9.3.1",
+    "ts-jest": "^27.0.4",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "isomorphic-unfetch": "^3.1.0",
+    "octokit": "^1.2.0",
+    "tslib": "^2.3.0"
+  },
+  "lint-staged": {
+    "src/**/*.{ts}": " yarn prettier:fix && yarn lint:fix"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "license-check-config": {
+    "src": [
+      "src/**/*.ts",
+      "!./node_modules/**/*"
+    ],
+    "path": "assets/license_header.txt",
+    "blocking": true,
+    "logInfo": false,
+    "logError": true
+  }
+}

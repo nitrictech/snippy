@@ -19,15 +19,15 @@ This package was used to create all code snippets used in the [nitric documentat
 Install with `npm install @nitric/snippy`, or `yarn add @nitric/snippy`
 
 ```typescript
-import { snippy } from "@nitric/snippy";
+import { snippy } from '@nitric/snippy';
 
 const result = await snippy({
   repos: [
-    ["nitrictech/node-sdk", "**/*.ts"],
-    ["nitrictech/go-sdk", "**/*.go"],
-    ["nitrictech/java-sdk", "**/*.java"],
+    ['nitrictech/node-sdk', 'ts'],
+    ['nitrictech/go-sdk', 'go'],
+    ['nitrictech/java-sdk', 'java'],
   ],
-});
+}).parse();
 ```
 
 ### Node 12+
@@ -35,13 +35,13 @@ const result = await snippy({
 Install with `npm install @nitric/snippy`, or `yarn add @nitric/snippy`
 
 ```typescript
-const { snippy } = require("@nitric/snippy");
+const { snippy } = require('@nitric/snippy');
 
 const result = await snippy({
   repos: [
-    ["nitrictech/node-sdk", "**/*.ts"],
-    ["nitrictech/go-sdk", "**/*.go"],
-    ["nitrictech/java-sdk", "**/*.java"],
+    ['nitrictech/node-sdk', 'ts'],
+    ['nitrictech/go-sdk', 'go'],
+    ['nitrictech/java-sdk', 'java'],
   ],
-});
+}).parse();
 ```

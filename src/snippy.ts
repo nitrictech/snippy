@@ -48,7 +48,7 @@ export class Snippy {
   }
 
   static processSnippet(fileContents: string, fileName: string) {
-    const lines = fileContents.split('\n');
+    const lines = fileContents.trim().split('\n');
 
     const contentArr: string[] = [];
     const lineNumbers: number[] = [];

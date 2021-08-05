@@ -52,13 +52,17 @@ export class Snippy {
 
     const contentArr: string[] = [];
     const lineNumbers: number[] = [];
+    const endOflineIndex = lines.length - 1;
     let recordLine = false;
     let isImportStatement = false;
     let previousIndent = 0;
+    let snippetEnded = false;
 
     lines.forEach((line, index) => {
       const matchStart = START_TAG_REGEX.test(line);
       const matchEnd = END_TAG_REGEX.test(line);
+
+      const lastLine = endOflineIndex === index;
 
       if (matchEnd) {
         recordLine = false;
@@ -67,6 +71,7 @@ export class Snippy {
           isImportStatement = false;
         } else {
           lineNumbers.push(index);
+          snippetEnded = true;
         }
       }
 
@@ -95,6 +100,11 @@ export class Snippy {
             previousIndent = 0;
           }
         }
+      }
+
+      // must happen after recorded line
+      if (lastLine && !snippetEnded) {
+        lineNumbers.push(index);
       }
 
       if (matchStart) {

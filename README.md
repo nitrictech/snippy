@@ -23,9 +23,18 @@ import { snippy } from '@nitric/snippy';
 
 const result = await snippy({
   repos: [
-    ['nitrictech/node-sdk', 'ts'],
-    ['nitrictech/go-sdk', 'go'],
-    ['nitrictech/java-sdk', 'java'],
+    {
+      url: 'nitrictech/node-sdk',
+      ext: 'ts',
+    },
+    {
+      url: 'nitrictech/go-sdk',
+      ext: 'go',
+    },
+    {
+      url: 'nitrictech/python-sdk',
+      ext: 'py',
+    },
   ],
 }).parse();
 ```
@@ -39,9 +48,44 @@ const { snippy } = require('@nitric/snippy');
 
 const result = await snippy({
   repos: [
-    ['nitrictech/node-sdk', 'ts'],
-    ['nitrictech/go-sdk', 'go'],
-    ['nitrictech/java-sdk', 'java'],
+    {
+      url: 'nitrictech/node-sdk',
+      ext: 'ts',
+    },
+    {
+      url: 'nitrictech/go-sdk',
+      ext: 'go',
+    },
+    {
+      url: 'nitrictech/python-sdk',
+      ext: 'py',
+    },
+  ],
+}).parse();
+```
+
+### with auth
+
+Install with `npm install @nitric/snippy`, or `yarn add @nitric/snippy`
+
+```typescript
+import { snippy } from '@nitric/snippy';
+
+const result = await snippy({
+  auth: process.env.GITHUB_AUTH_TOKEN,
+  repos: [
+    {
+      url: 'nitrictech/node-sdk',
+      ext: 'ts',
+    },
+    {
+      url: 'nitrictech/go-sdk',
+      ext: 'go',
+    },
+    {
+      url: 'nitrictech/python-sdk',
+      ext: 'py',
+    },
   ],
 }).parse();
 ```

@@ -13,12 +13,12 @@ const LANG_MAP_DEFAULTS: { [key: string]: SNIPPY_DEFAULT_LANGUAGES } = {
   cs: 'csharp',
 };
 
-class Snippy {
+export class Snippy {
   private readonly octokit: Octokit;
   private readonly config: SnippyConfig;
 
   constructor(config: SnippyConfig) {
-    this.octokit = new Octokit({ auth: config.gitHubAuthToken });
+    this.octokit = new Octokit({ auth: config.auth });
 
     this.config = {
       ...config,
@@ -35,6 +35,7 @@ class Snippy {
     const contentArr: string[] = [];
     const lineNumbers: number[] = [];
     let recordLine = false;
+    let isImportStatement = false;
     let previousIndent = 0;
 
     lines.forEach((line, index) => {
@@ -45,6 +46,7 @@ class Snippy {
         recordLine = false;
         if (line.includes('import')) {
           contentArr.push('');
+          isImportStatement = false;
         } else {
           lineNumbers.push(index);
         }
@@ -53,21 +55,27 @@ class Snippy {
       // records and strips indents from snippet lines (if required)
       if (recordLine) {
         const indent = minIndent(line);
+        const isEmpty = !line.trim();
 
-        if (indent === 0) {
+        if (indent === 0 || isEmpty) {
           contentArr.push(line);
-          previousIndent = indent;
+          if (!isEmpty) previousIndent = indent;
         } else {
-          const regex = new RegExp(
-            `^[ \\t]{${
-              previousIndent === 0 ? indent : previousIndent - indent
-            }}`,
-            'gm'
-          );
+          let indentsToRemove = indent;
 
-          previousIndent = indent;
+          if (previousIndent > 0 && indent > previousIndent) {
+            indentsToRemove = previousIndent;
+          } else {
+            previousIndent = indent;
+          }
+
+          const regex = new RegExp(`^[ \\t]{${indentsToRemove}}`, 'gm');
 
           contentArr.push(line.replace(regex, ''));
+
+          if (isImportStatement) {
+            previousIndent = 0;
+          }
         }
       }
 
@@ -75,6 +83,8 @@ class Snippy {
         recordLine = true;
         if (!line.includes('import')) {
           lineNumbers.push(index + 2);
+        } else {
+          isImportStatement = true;
         }
       }
     });
@@ -93,29 +103,34 @@ class Snippy {
     const MANIFEST = {};
     const { repos } = this.config;
 
-    await Promise.all(
-      repos.map(async ([repo, ext]) => {
-        const {
-          data: { items: files },
-        } = await this.octokit.rest.search.code({
-          q: `[START snippet] in:file repo:${repo} extension:${ext}`,
-        });
+    try {
+      await Promise.all(
+        repos.map(async ({ url, ext }) => {
+          const {
+            data: { items: files },
+          } = await this.octokit.rest.search.code({
+            q: `[START snippet] in:file repo:${url} extension:${ext}`,
+          });
 
-        return await Promise.all(
-          files.map((file) =>
-            fetch(rawContentUrl(file.html_url)).then(
-              async (res) =>
-                (MANIFEST[file.name] = Snippy.processSnippet(
-                  await res.text(),
-                  file.name
-                ))
+          return await Promise.all(
+            files.map((file) =>
+              fetch(rawContentUrl(file.html_url)).then(
+                async (res) =>
+                  (MANIFEST[file.name] = Snippy.processSnippet(
+                    await res.text(),
+                    file.name
+                  ))
+              )
             )
-          )
-        );
-      })
-    );
+          );
+        })
+      );
 
-    return MANIFEST;
+      return MANIFEST;
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
   }
 }
 

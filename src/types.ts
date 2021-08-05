@@ -1,5 +1,3 @@
-import { Octokit } from 'octokit';
-
 export type SNIPPY_DEFAULT_LANGUAGES =
   | 'javascript'
   | 'typescript'
@@ -9,12 +7,15 @@ export type SNIPPY_DEFAULT_LANGUAGES =
   | 'php'
   | 'csharp';
 
-export type GitHubRepo = [string, string];
+export interface RepoSearchObject {
+  url: string;
+  ext: string;
+}
 
 export interface SnippyConfig {
-  repos: [string, string][];
+  repos: RepoSearchObject[];
   extLangMap?: { [key: string]: string };
-  gitHubAuthToken?: string;
+  auth?: string;
 }
 
 export interface SnippySnippet {

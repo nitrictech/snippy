@@ -1,6 +1,11 @@
 import { Octokit } from 'octokit';
 import fetch from 'isomorphic-unfetch';
-import { SnippyConfig, SnippySnippet, SNIPPY_DEFAULT_LANGUAGES } from './types';
+import {
+  SnippyConfig,
+  SnippyResponse,
+  SnippySnippet,
+  SNIPPY_DEFAULT_LANGUAGES,
+} from './types';
 import { minIndent, rawContentUrl } from './utils';
 import { END_TAG_REGEX, START_TAG_REGEX } from './constants';
 
@@ -89,7 +94,7 @@ export class Snippy {
       }
     });
 
-    const snippet: SnippySnippet = {
+    const snippet = {
       name: fileName,
       lang: LANG_MAP_DEFAULTS[fileName.split('.').pop()],
       content: contentArr.join('\n'),
@@ -99,7 +104,7 @@ export class Snippy {
     return snippet;
   }
 
-  async parse() {
+  async parse(): Promise<SnippyResponse> {
     const MANIFEST = {};
     const { repos } = this.config;
 
@@ -114,13 +119,21 @@ export class Snippy {
 
           return await Promise.all(
             files.map((file) =>
-              fetch(rawContentUrl(file.html_url)).then(
-                async (res) =>
-                  (MANIFEST[file.name] = Snippy.processSnippet(
-                    await res.text(),
-                    file.name
-                  ))
-              )
+              fetch(rawContentUrl(file.html_url)).then(async (res) => {
+                const snippet: Partial<SnippySnippet> = Snippy.processSnippet(
+                  await res.text(),
+                  file.name
+                );
+
+                const { lineNumbers } = snippet;
+
+                // create link to snippet
+                snippet.url =
+                  file.html_url +
+                  `#L${snippet.lineNumbers[0]}-L${lineNumbers[1]}`;
+
+                MANIFEST[file.name] = snippet;
+              })
             )
           );
         })

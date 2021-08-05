@@ -9,7 +9,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "bump": "standard-version",
-    "build": "tsc",
+    "build": "tsc --project tsconfig.build.json",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "prettier:check": "prettier --check src",

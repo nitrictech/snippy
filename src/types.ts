@@ -23,6 +23,7 @@ export interface SnippySnippet {
   lang: SNIPPY_DEFAULT_LANGUAGES | string;
   content: string;
   lineNumbers: number[];
+  url: string;
 }
 
 export interface SnippyResponse {

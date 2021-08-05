@@ -1,4 +1,7 @@
 import { snippy, Snippy } from './snippy';
+import fetch from 'isomorphic-unfetch';
+
+jest.mock('isomorphic-unfetch');
 
 describe('Snippy Client Tests', () => {
   describe('processSnippet method', () => {
@@ -100,6 +103,11 @@ describe('Snippy Client Tests', () => {
           },
         });
 
+      (fetch as any).mockResolvedValue({
+        text: () =>
+          "import { grpc } from '@nitric/sdk';\n\n// [START import]\nimport { documents } from '@nitric/sdk';\n// [END import]\n\nconst proto = grpc.document.DocumentServiceClient.prototype;\n\nconst MOCKED_GET_RESPONSE = {\n  hasDocument: () => true,\n  getDocument: () => ({\n    getContent: () => ({\n      toJavaScript: () => true,\n    }),\n  }),\n};\n\ntest('Should get a documents content', async () => {\n  jest\n    .spyOn(proto, 'get')\n    .mockImplementation((_, cb: any) => cb(null, MOCKED_GET_RESPONSE));\n\n  // [START snippet]\n  const document = documents().collection('products').doc('nitric');\n\n  const product = await document.get();\n  // [END snippet]\n});\n",
+      });
+
       await expect(snippyClient.parse()).resolves.toEqual({
         'get-document.ts': {
           name: 'get-document.ts',
@@ -107,6 +115,7 @@ describe('Snippy Client Tests', () => {
           content:
             "import { documents } from '@nitric/sdk';\n\nconst document = documents().collection('products').doc('nitric');\n\nconst product = await document.get();",
           lineNumbers: [24, 26],
+          url: 'https://github.com/nitrictech/snippet-spike/blob/f678b64f0c4b905ac6b3360f95ce0397d800bfe0/get-document.ts#L24-L26',
         },
       });
     });

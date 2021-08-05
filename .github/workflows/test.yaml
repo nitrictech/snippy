@@ -11,11 +11,17 @@ jobs:
       - name: Cache Yarn Cache
         uses: actions/cache@v2
         with:
-          path: "node/node_modules"
+          path: 'node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
       - name: Install modules
         run: yarn --frozen-lockfile
+      - name: License Header Check
+        run: yarn license:header:check
+      - name: OSS License Whitelist Check
+        run: yarn license:check
       - name: Run format linting
         run: yarn prettier:check
+      - name: Build
+        run: yarn build
       - name: Run tests
-        run: yarn test
+        run: yarn coverage:upload

@@ -4,14 +4,18 @@
   "version": "0.0.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "repository": "git@github.com:nitrictech/snippets.git",
+  "repository": "https://github.com/nitrictech/snippy",
   "author": "Nitric <https://github.com/nitrictech>",
+  "contributors": [
+    "David Moore <david.moore@nitric.io>"
+  ],
   "license": "Apache-2.0",
   "scripts": {
     "bump": "standard-version",
     "build": "tsc --project tsconfig.build.json",
     "test": "jest",
     "test:coverage": "jest --coverage",
+    "coverage:upload": "yarn run test:coverage && codecov",
     "prettier:check": "prettier --check src",
     "prettier:fix": "prettier --write src",
     "lint": "eslint \"src/**/*.ts\"",

@@ -105,6 +105,7 @@ export class Snippy {
       // must happen after recorded line
       if (lastLine && !snippetEnded) {
         lineNumbers.push(index);
+        console.warn(`[END snippet] tag not found for file: "${fileName}"`);
       }
 
       if (matchStart) {

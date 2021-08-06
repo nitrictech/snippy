@@ -71,6 +71,30 @@ describe('Snippy Client Tests', () => {
         lineNumbers: [6, 10],
       });
     });
+
+    test('Test that the processSnippet method produces correct snippet with no snippet at EOF', async () => {
+      const fileContentsPython = `
+  # [START import]
+  from nitric.api import Documents
+  # [END import]
+
+  # [START snippet]
+  docs = Documents()
+
+  document = docs.collection("products").doc("nitric")
+
+  product = await document.get()`;
+
+      expect(
+        Snippy.processSnippet(fileContentsPython.trim(), 'get-document.py')
+      ).toEqual({
+        name: 'get-document.py',
+        lang: 'python',
+        content:
+          'from nitric.api import Documents\n\ndocs = Documents()\n\ndocument = docs.collection("products").doc("nitric")\n\nproduct = await document.get()',
+        lineNumbers: [6, 9],
+      });
+    });
   });
 
   describe('parse method', () => {
@@ -79,7 +103,7 @@ describe('Snippy Client Tests', () => {
         repos: [
           {
             url: 'nitrictech/snippet-spike',
-            ext: 'ts',
+            exts: ['ts'],
           },
         ],
       });

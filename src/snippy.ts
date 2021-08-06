@@ -48,17 +48,21 @@ export class Snippy {
   }
 
   static processSnippet(fileContents: string, fileName: string) {
-    const lines = fileContents.split('\n');
+    const lines = fileContents.trim().split('\n');
 
     const contentArr: string[] = [];
     const lineNumbers: number[] = [];
+    const endOflineIndex = lines.length - 1;
     let recordLine = false;
     let isImportStatement = false;
     let previousIndent = 0;
+    let snippetEnded = false;
 
     lines.forEach((line, index) => {
       const matchStart = START_TAG_REGEX.test(line);
       const matchEnd = END_TAG_REGEX.test(line);
+
+      const lastLine = endOflineIndex === index;
 
       if (matchEnd) {
         recordLine = false;
@@ -67,6 +71,7 @@ export class Snippy {
           isImportStatement = false;
         } else {
           lineNumbers.push(index);
+          snippetEnded = true;
         }
       }
 
@@ -97,6 +102,12 @@ export class Snippy {
         }
       }
 
+      // must happen after recorded line
+      if (lastLine && !snippetEnded) {
+        lineNumbers.push(index);
+        console.warn(`[END snippet] tag not found for file: "${fileName}"`);
+      }
+
       if (matchStart) {
         recordLine = true;
         if (!line.includes('import')) {
@@ -123,11 +134,15 @@ export class Snippy {
 
     try {
       await Promise.all(
-        repos.map(async ({ url, ext }) => {
+        repos.map(async ({ url, exts }) => {
+          const extensionParams = exts
+            .map((ext) => `extension:${ext}`)
+            .join(' ');
+
           const {
             data: { items: files },
           } = await this.octokit.rest.search.code({
-            q: `[START snippet] in:file repo:${url} extension:${ext}`,
+            q: `[START snippet] in:file repo:${url} ${extensionParams}`,
           });
 
           return await Promise.all(

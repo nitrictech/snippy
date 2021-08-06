@@ -134,11 +134,15 @@ export class Snippy {
 
     try {
       await Promise.all(
-        repos.map(async ({ url, ext }) => {
+        repos.map(async ({ url, exts }) => {
+          const extensionParams = exts
+            .map((ext) => `extension:${ext}`)
+            .join(' ');
+
           const {
             data: { items: files },
           } = await this.octokit.rest.search.code({
-            q: `[START snippet] in:file repo:${url} extension:${ext}`,
+            q: `[START snippet] in:file repo:${url} ${extensionParams}`,
           });
 
           return await Promise.all(

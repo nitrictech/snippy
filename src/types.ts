@@ -22,7 +22,7 @@ export type SNIPPY_DEFAULT_LANGUAGES =
 
 export interface RepoSearchObject {
   url: string;
-  ext: string;
+  exts: string[];
 }
 
 export interface SnippyConfig {

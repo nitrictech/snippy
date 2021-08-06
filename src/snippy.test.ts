@@ -103,7 +103,7 @@ describe('Snippy Client Tests', () => {
         repos: [
           {
             url: 'nitrictech/snippet-spike',
-            ext: 'ts',
+            exts: ['ts'],
           },
         ],
       });

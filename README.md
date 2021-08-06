@@ -25,15 +25,15 @@ const result = await snippy({
   repos: [
     {
       url: 'nitrictech/node-sdk',
-      ext: 'ts',
+      exts: ['ts', 'js'],
     },
     {
       url: 'nitrictech/go-sdk',
-      ext: 'go',
+      exts: ['go'],
     },
     {
       url: 'nitrictech/python-sdk',
-      ext: 'py',
+      exts: ['py'],
     },
   ],
 }).parse();
@@ -50,15 +50,15 @@ const result = await snippy({
   repos: [
     {
       url: 'nitrictech/node-sdk',
-      ext: 'ts',
+      exts: ['ts', 'js'],
     },
     {
       url: 'nitrictech/go-sdk',
-      ext: 'go',
+      exts: ['go'],
     },
     {
       url: 'nitrictech/python-sdk',
-      ext: 'py',
+      exts: ['py'],
     },
   ],
 }).parse();
@@ -76,15 +76,15 @@ const result = await snippy({
   repos: [
     {
       url: 'nitrictech/node-sdk',
-      ext: 'ts',
+      exts: ['ts', 'js'],
     },
     {
       url: 'nitrictech/go-sdk',
-      ext: 'go',
+      exts: ['go'],
     },
     {
       url: 'nitrictech/python-sdk',
-      ext: 'py',
+      exts: ['py'],
     },
   ],
 }).parse();

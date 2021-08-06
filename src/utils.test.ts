@@ -41,13 +41,16 @@ describe('findByFileName', () => {
       lang: 'typescript',
       content: 'test',
       lineNumbers: [10, 11],
-      url: 'https://github.com/nitrictech/node-sdk/blob/f678b64f0c4b905ac6b3360f95ce0397d800bfe0/examples/documents/get.ts'
+      url: 'https://github.com/nitrictech/node-sdk/blob/f678b64f0c4b905ac6b3360f95ce0397d800bfe0/examples/documents/get.ts',
     };
 
-    const snippet = findByFileName({
-      'nitrictech/node-sdk/examples/documents/get.ts': exampleSnippet
-    }, 'get.ts');
+    const snippet = findByFileName(
+      {
+        'nitrictech/node-sdk/examples/documents/get.ts': exampleSnippet,
+      },
+      'get.ts'
+    );
 
-    expect(snippet).toEqual(exampleSnippet)
+    expect(snippet).toEqual(exampleSnippet);
   });
-})
+});

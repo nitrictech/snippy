@@ -146,7 +146,7 @@ describe('Snippy Client Tests', () => {
       });
 
       await expect(snippyClient.parse()).resolves.toEqual({
-        'get-document.ts': {
+        'nitrictech/snippet-spike/get-document.ts': {
           name: 'get-document.ts',
           lang: 'typescript',
           content:

@@ -11,6 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+import { SnippyResponse, SnippySnippet } from './types';
+
+// limitations under the License.
 export const minIndent = (str: string) => {
   const match = str.match(/^[ \t]*(?=\S)/gm);
 
@@ -23,3 +26,10 @@ export const minIndent = (str: string) => {
 
 export const rawContentUrl = (url: string) =>
   url.replace('github.com', 'raw.githubusercontent.com').replace('/blob', '');
+
+export const findByFileName = (
+  response: SnippyResponse,
+  fileName: string
+): SnippySnippet | undefined => {
+  return Object.values(response).find((s) => s.name === fileName);
+};

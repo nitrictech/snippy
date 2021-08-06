@@ -160,7 +160,7 @@ export class Snippy {
                   file.html_url +
                   `#L${snippet.lineNumbers[0]}-L${lineNumbers[1]}`;
 
-                MANIFEST[file.name] = snippet;
+                MANIFEST[`${file.repository.full_name}/${file.path}`] = snippet;
               })
             )
           );

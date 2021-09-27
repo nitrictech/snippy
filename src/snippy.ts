@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import { Octokit } from 'octokit';
+import { throttling } from '@octokit/plugin-throttling';
 import fetch from 'isomorphic-unfetch';
 import {
   SnippyConfig,
@@ -31,12 +32,34 @@ const LANG_MAP_DEFAULTS: { [key: string]: SNIPPY_DEFAULT_LANGUAGES } = {
   cs: 'csharp',
 };
 
+const SnippyOctokit = Octokit.plugin(throttling);
 export class Snippy {
   private readonly octokit: Octokit;
   private readonly config: SnippyConfig;
 
   constructor(config: SnippyConfig) {
-    this.octokit = new Octokit({ auth: config.auth });
+    this.octokit = new SnippyOctokit({
+      auth: config.auth,
+      throttle: {
+        onRateLimit: (retryAfter, options, octokit: Octokit) => {
+          octokit.log.warn(
+            `Request quota exhausted for request ${options.method} ${options.url}`
+          );
+
+          if (options.request.retryCount === 0) {
+            // only retries once
+            octokit.log.info(`Retrying after ${retryAfter} seconds!`);
+            return true;
+          }
+        },
+        onAbuseLimit: (retryAfter, options, octokit: Octokit) => {
+          // does not retry, only logs a warning
+          octokit.log.warn(
+            `Abuse detected for request ${options.method} ${options.url}`
+          );
+        },
+      },
+    });
 
     this.config = {
       ...config,

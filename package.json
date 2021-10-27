@@ -1,7 +1,7 @@
 {
   "name": "@nitric/snippy",
   "description": "Nitric code snippet parser client",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "repository": "https://github.com/nitrictech/snippy",

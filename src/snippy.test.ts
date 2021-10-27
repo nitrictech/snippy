@@ -95,6 +95,68 @@ describe('Snippy Client Tests', () => {
         lineNumbers: [6, 9],
       });
     });
+
+    test('Test that the processSnippet method produces correct snippet with no import tags', async () => {
+      const fileContentsTypescript = `
+// [START snippet]
+// src/main/java/function/Create.java
+
+package function;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+
+import common.Order;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.nitric.api.document.Documents;
+import io.nitric.faas.Faas;
+
+public class Create {
+
+    public static void main(String[] args) {
+        new Faas()
+            .http(context -> {
+                try {
+                    var json = context.getRequest().getDataAsText();
+                    var order = new ObjectMapper().readValue(json, Order.class);
+
+                    order.id = UUID.randomUUID().toString();
+                    order.dateOrdered = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
+        
+                    new Documents().collection("orders").doc(order.id, Order.class).set(order);
+        
+                    var msg = String.format("Created order with ID: %s", order.id);
+                    context.getResponse().data(msg);
+        
+                } catch (IOException ioe) {
+                    context.getResponse()
+                        .status(500)
+                        .data("error: " + ioe);
+                }
+        
+                return context;
+            })
+            .start();
+    }
+
+}
+
+// [END snippet]
+`;
+
+      expect(
+        Snippy.processSnippet(fileContentsTypescript.trim(), 'Create.java')
+      ).toEqual({
+        name: 'Create.java',
+        lang: 'java',
+        content:
+          '// src/main/java/function/Create.java\n\npackage function;\n\nimport java.io.IOException;\nimport java.time.LocalDateTime;\nimport java.time.format.DateTimeFormatter;\nimport java.util.UUID;\n\nimport common.Order;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\nimport io.nitric.api.document.Documents;\nimport io.nitric.faas.Faas;\n\npublic class Create {\n\n    public static void main(String[] args) {\n        new Faas()\n            .http(context -> {\n                try {\n                    var json = context.getRequest().getDataAsText();\n                    var order = new ObjectMapper().readValue(json, Order.class);\n\n                    order.id = UUID.randomUUID().toString();\n                    order.dateOrdered = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);\n        \n                    new Documents().collection("orders").doc(order.id, Order.class).set(order);\n        \n                    var msg = String.format("Created order with ID: %s", order.id);\n                    context.getResponse().data(msg);\n        \n                } catch (IOException ioe) {\n                    context.getResponse()\n                        .status(500)\n                        .data("error: " + ioe);\n                }\n        \n                return context;\n            })\n            .start();\n    }\n\n}\n',
+        lineNumbers: [2, 46],
+      });
+    });
   });
 
   describe('parse method', () => {

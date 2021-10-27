@@ -72,6 +72,9 @@ export class Snippy {
 
   static processSnippet(fileContents: string, fileName: string) {
     const lines = fileContents.trim().split('\n');
+    const retainAllIdents =
+      lines[0].endsWith('[START snippet]') &&
+      lines[lines.length - 1].endsWith('[END snippet]');
 
     const contentArr: string[] = [];
     const lineNumbers: number[] = [];
@@ -103,7 +106,7 @@ export class Snippy {
         const indent = minIndent(line);
         const isEmpty = !line.trim();
 
-        if (indent === 0 || isEmpty) {
+        if (indent === 0 || isEmpty || retainAllIdents) {
           contentArr.push(line);
           if (!isEmpty) previousIndent = indent;
         } else {

@@ -163,7 +163,13 @@ export class Snippy {
     return snippet;
   }
 
-  async get(filePath: string): Promise<SnippySnippet> {
+  /**
+   * Fetches a snippet from a repo and processes it
+   * @param filePath
+   * @param branch The name of the commit/branch/tag. Default: main
+   * @returns
+   */
+  async get(filePath: string, branch: string = 'main'): Promise<SnippySnippet> {
     try {
       const [owner, repo, ...path] = filePath.split('/');
 
@@ -171,6 +177,7 @@ export class Snippy {
         owner,
         repo,
         path: path.join('/'),
+        ref: branch,
         headers: {
           accept: 'application/vnd.github.VERSION.raw',
         },
@@ -181,7 +188,7 @@ export class Snippy {
         name: path[path.length - 1],
       };
 
-      const url = `https://github.com/${owner}/${repo}/blob/main/${path.join(
+      const url = `https://github.com/${owner}/${repo}/blob/${branch}/${path.join(
         '/'
       )}`;
 

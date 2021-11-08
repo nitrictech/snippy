@@ -26,7 +26,7 @@ export interface RepoSearchObject {
 }
 
 export interface SnippyConfig {
-  repos: RepoSearchObject[];
+  repos?: RepoSearchObject[];
   extLangMap?: { [key: string]: string };
   auth?: string;
 }
@@ -36,7 +36,7 @@ export interface SnippySnippet {
   lang: SNIPPY_DEFAULT_LANGUAGES | string;
   content: string;
   lineNumbers: number[];
-  url: string;
+  url?: string;
 }
 
 export interface SnippyResponse {

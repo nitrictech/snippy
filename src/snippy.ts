@@ -154,7 +154,45 @@ export class Snippy {
     return snippet;
   }
 
-  async parse(): Promise<SnippyResponse> {
+  static addSnippetUrl(snippet: SnippySnippet, url: string) {
+    const { lineNumbers } = snippet;
+
+    // create link to snippet
+    snippet.url = url + `#L${snippet.lineNumbers[0]}-L${lineNumbers[1]}`;
+
+    return snippet;
+  }
+
+  async get(filePath: string): Promise<SnippySnippet> {
+    try {
+      const [owner, repo, ...path] = filePath.split('/');
+
+      const { data } = await this.octokit.rest.repos.getContent({
+        owner,
+        repo,
+        path: path.join('/'),
+        headers: {
+          accept: 'application/vnd.github.VERSION.raw',
+        },
+      });
+
+      const snippet = {
+        ...Snippy.processSnippet(data as unknown as string, filePath),
+        name: path[path.length - 1],
+      };
+
+      const url = `https://github.com/${owner}/${repo}/blob/main/${path.join(
+        '/'
+      )}`;
+
+      return Snippy.addSnippetUrl(snippet, url);
+    } catch (e) {
+      console.error(`Error fetching snippet: ${filePath}`);
+      console.error(e.message);
+    }
+  }
+
+  async search(): Promise<SnippyResponse> {
     const MANIFEST = {};
     const { repos } = this.config;
 
@@ -174,19 +212,13 @@ export class Snippy {
           return await Promise.all(
             files.map((file) =>
               fetch(rawContentUrl(file.html_url)).then(async (res) => {
-                const snippet: Partial<SnippySnippet> = Snippy.processSnippet(
+                const snippet = Snippy.processSnippet(
                   await res.text(),
                   file.name
                 );
 
-                const { lineNumbers } = snippet;
-
-                // create link to snippet
-                snippet.url =
-                  file.html_url +
-                  `#L${snippet.lineNumbers[0]}-L${lineNumbers[1]}`;
-
-                MANIFEST[`${file.repository.full_name}/${file.path}`] = snippet;
+                MANIFEST[`${file.repository.full_name}/${file.path}`] =
+                  Snippy.addSnippetUrl(snippet, file.html_url);
               })
             )
           );
@@ -203,7 +235,7 @@ export class Snippy {
 
 let snippySingleton: Snippy;
 
-export const snippy = (config: SnippyConfig) => {
+export const snippy = (config: SnippyConfig = {}) => {
   if (!snippySingleton) {
     snippySingleton = new Snippy(config);
   }

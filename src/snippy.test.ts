@@ -159,7 +159,7 @@ public class Create {
     });
   });
 
-  describe('parse method', () => {
+  describe('search method', () => {
     test('should return correct manifest', async () => {
       const snippyClient = snippy({
         repos: [
@@ -207,7 +207,7 @@ public class Create {
           "import { grpc } from '@nitric/sdk';\n\n// [START import]\nimport { documents } from '@nitric/sdk';\n// [END import]\n\nconst proto = grpc.document.DocumentServiceClient.prototype;\n\nconst MOCKED_GET_RESPONSE = {\n  hasDocument: () => true,\n  getDocument: () => ({\n    getContent: () => ({\n      toJavaScript: () => true,\n    }),\n  }),\n};\n\ntest('Should get a documents content', async () => {\n  jest\n    .spyOn(proto, 'get')\n    .mockImplementation((_, cb: any) => cb(null, MOCKED_GET_RESPONSE));\n\n  // [START snippet]\n  const document = documents().collection('products').doc('nitric');\n\n  const product = await document.get();\n  // [END snippet]\n});\n",
       });
 
-      await expect(snippyClient.parse()).resolves.toEqual({
+      await expect(snippyClient.search()).resolves.toEqual({
         'nitrictech/snippet-spike/get-document.ts': {
           name: 'get-document.ts',
           lang: 'typescript',
@@ -216,6 +216,28 @@ public class Create {
           lineNumbers: [24, 26],
           url: 'https://github.com/nitrictech/snippet-spike/blob/f678b64f0c4b905ac6b3360f95ce0397d800bfe0/get-document.ts#L24-L26',
         },
+      });
+    });
+  });
+
+  describe('get method', () => {
+    test('should return correct manifest', async () => {
+      const snippyClient = snippy();
+
+      jest
+        .spyOn(snippyClient['octokit'].rest.repos, 'getContent')
+        .mockResolvedValue({
+          data: `// Copyright 2021, Nitric Technologies Pty Ltd.\n//\n// Licensed under the Apache License, Version 2.0 (the "License");\n// you may not use this file except in compliance with the License.\n// You may obtain a copy of the License at\n//\n//      http://www.apache.org/licenses/LICENSE-2.0\n//\n// Unless required by applicable law or agreed to in writing, software\n// distributed under the License is distributed on an "AS IS" BASIS,\n// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n// See the License for the specific language governing permissions and\n// limitations under the License.\n// [START import]\nimport { documents } from '@nitric/sdk';\n// [END import]\n\nexport async function getDocument() {\n  // [START snippet]\n  const documentRef = documents().collection('products').doc('nitric');\n\n  const product = await documentRef.get();\n  // [END snippet]\n  return product;\n}\n`,
+        } as any);
+
+      await expect(
+        snippyClient.get('nitrictech/node-sdk/examples/documents/get.ts')
+      ).resolves.toEqual({
+        name: 'get.ts',
+        lineNumbers: [20, 22],
+        lang: 'typescript',
+        url: 'https://github.com/nitrictech/node-sdk/blob/main/examples/documents/get.ts#L20-L22',
+        content: `import { documents } from '@nitric/sdk';\n\nconst documentRef = documents().collection('products').doc('nitric');\n\nconst product = await documentRef.get();`,
       });
     });
   });

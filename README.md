@@ -5,7 +5,6 @@
 [![Version](https://img.shields.io/npm/v/@nitric/snippy.svg)](https://npmjs.org/package/@nitric/snippy)
 [![Downloads/week](https://img.shields.io/npm/dw/@nitric/snippy.svg)](https://npmjs.org/package/@nitric/snippy)
 
-
 > The Code snippet parser.
 
 The `@nitric/snippy` package was created to find and parse snippets into readable data that can be consumed by any application.
@@ -23,6 +22,28 @@ This package was used to create all code snippets used in the [nitric documentat
 ### Node 12+
 
 Install with `npm install @nitric/snippy`, or `yarn add @nitric/snippy`
+
+#### Get a snippet
+
+```typescript
+const { snippy } = require('@nitric/snippy');
+
+const result = await snippy().get(
+  'nitrictech/node-sdk/examples/documents/get.ts'
+);
+```
+
+#### Get a snippet with Auth
+
+```typescript
+const { snippy } = require('@nitric/snippy');
+
+const result = await snippy({
+  auth: process.env.GITHUB_AUTH_TOKEN,
+}).get('nitrictech/node-sdk/examples/documents/get.ts');
+```
+
+#### Search
 
 ```typescript
 const { snippy } = require('@nitric/snippy');
@@ -42,10 +63,10 @@ const result = await snippy({
       exts: ['py'],
     },
   ],
-}).parse();
+}).search();
 ```
 
-### with auth
+#### Search with auth
 
 Install with `npm install @nitric/snippy`, or `yarn add @nitric/snippy`
 
@@ -68,5 +89,5 @@ const result = await snippy({
       exts: ['py'],
     },
   ],
-}).parse();
+}).search();
 ```
